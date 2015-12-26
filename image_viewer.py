@@ -11,6 +11,11 @@ class Frame(wx.Frame):
 
         self.CreateMenuBar()
 
+        # Create a StatusBar
+        self.StatusBar = self.CreateStatusBar()
+        self.StatusBar.SetFieldsCount(2)
+        self.StatusBar.SetStatusText('No Image Specified', 1)
+
     # Create a new instance of menuBar
     def CreateMenuBar(self):
         menuBar = wx.MenuBar()
@@ -25,21 +30,31 @@ class Frame(wx.Frame):
 
     def OnOpen(self, event):
         "Open an image file, set title if successful"
-        print "OnOpen called"
+        #print "OnOpen called"
         
         # Create a file-open dialog in the current working directory
+        filters = 'Image files(*.gif;*.png;*.jpg)|*.gif;*.png;*.jpg'
         dlg = wx.FileDialog(self,
                       message="Open an image...",
                       defaultDir=os.getcwd(),
                       defaultFile="",
-                      style=wx.OPEN)
+                      style=wx.OPEN,
+                      wildcard=filters)
 
         # Call the dialog as a model-dialog so we are required to choose Ok or Cancel
         if dlg.ShowModal() == wx.ID_OK:
             filename = dlg.GetPath() # If user has selected something, get the file path and set the window's title to the path
-            print filename
+            #print filename
+            self.SetTitle(filename)
+            wx.BeginBusyCursor()
+            wx.EndBusyCursor()
 
             dlg.Destroy() # Clean up dialog when its no longer needed
+
+        def ShowBitmap(self):
+            self.bitmap = wx.StaticBitmap(self.panel, -1, wx.BitmapFromImage(self.image)) # Convert to Bitmap to draw the image to the screen
+            self.SetClientSize(self.bitmap.GetSize()) # Resize the application window to fit the image
+            self.Center()
         
 
     def OnExit(self, event):
