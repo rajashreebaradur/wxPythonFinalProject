@@ -16,6 +16,8 @@ class Frame(wx.Frame):
         self.StatusBar.SetFieldsCount(2)
         self.StatusBar.SetStatusText('No Image Specified', 1)
 
+        self.bitmap = None # set to None as it is referred in ShowBitmap before it is instantiated
+
     # Create a new instance of menuBar
     def CreateMenuBar(self):
         menuBar = wx.MenuBar()
@@ -38,8 +40,8 @@ class Frame(wx.Frame):
                       message="Open an image...",
                       defaultDir=os.getcwd(),
                       defaultFile="",
-                      style=wx.OPEN,
-                      wildcard=filters)
+                      wildcard=filters,
+                      style=wx.OPEN)
 
         # Call the dialog as a model-dialog so we are required to choose Ok or Cancel
         if dlg.ShowModal() == wx.ID_OK:
@@ -47,11 +49,14 @@ class Frame(wx.Frame):
             #print filename
             self.SetTitle(filename)
             wx.BeginBusyCursor()
+            self.image = wx.Image(filename, wx.BITMAP_TYPE_ANY, -1) # Load the image from the filename and auto-detect file type
+            self.StatusBar.SetStatusText("Size = %s" %(str(self.image.GetSize())), 1) # Set status bar to show image's size
+            self.ShowBitmap() # Display the image inside the panel
             wx.EndBusyCursor()
 
             dlg.Destroy() # Clean up dialog when its no longer needed
 
-        def ShowBitmap(self):
+    def ShowBitmap(self):
             self.bitmap = wx.StaticBitmap(self.panel, -1, wx.BitmapFromImage(self.image)) # Convert to Bitmap to draw the image to the screen
             self.SetClientSize(self.bitmap.GetSize()) # Resize the application window to fit the image
             self.Center()
@@ -59,7 +64,7 @@ class Frame(wx.Frame):
 
     def OnExit(self, event):
         "Close the application by Destroying the object"
-        print "OnExit called"
+        #print "OnExit called"
         self.Destroy()
         
 
