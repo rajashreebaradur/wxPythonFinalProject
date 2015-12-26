@@ -1,5 +1,6 @@
 import wx
 import os
+import wx.html
 
 # Frame subclassed from wx.Frame
 class Frame(wx.Frame):
@@ -23,12 +24,23 @@ class Frame(wx.Frame):
         menuBar = wx.MenuBar()
         self.SetMenuBar(menuBar)
         menuFile = wx.Menu()
-        menuBar.Append(menuFile, "&File")
-        fileOpenMenuItem = menuFile.Append(-1, "&Open...\tCtrl+O", "Open an image")
-        self.Bind(wx.EVT_MENU, self.OnOpen, fileOpenMenuItem)
+        menuBar.Append(menuFile, "&File") # Add 'File' on the menu bar
+        fileOpenMenuItem = menuFile.Append(-1, "&Open...\tCtrl+O", "Open an image") # Add 'Open' as a menu item
+        self.Bind(wx.EVT_MENU, self.OnOpen, fileOpenMenuItem) # Bind the menu item to an event handler
 
-        exitMenuItem = menuFile.Append(-1, "E&xit\tCtrl+Q", "Exit the application")
-        self.Bind(wx.EVT_MENU, self.OnExit, exitMenuItem)
+        exitMenuItem = menuFile.Append(-1, "E&xit\tCtrl+Q", "Exit the application") # Add 'Exit' as a menu item
+        self.Bind(wx.EVT_MENU, self.OnExit, exitMenuItem) # Bind the menu item to an event handler
+
+        menuHelp = wx.Menu()
+        menuBar.Append(menuHelp, "&Help") # Add 'Help' on the menu bar
+        helpMenuItem = menuHelp.Append(-1, "&About", "About application") # Add 'About' as a menu item
+        self.Bind(wx.EVT_MENU, self.OnAbout, helpMenuItem) # Bind the menu item to an event handler
+
+    # Event action for 'About' menu item
+    def OnAbout(self, event):
+        dlg = ImageViewerAbout(self)
+        dlg.ShowModal()
+        dlg.Destroy()
 
     def OnOpen(self, event):
         "Open an image file, set title if successful"
@@ -66,7 +78,29 @@ class Frame(wx.Frame):
         "Close the application by Destroying the object"
         #print "OnExit called"
         self.Destroy()
-        
+
+# A class to open the 'About' page in the html window
+class ImageViewerAbout(wx.Dialog):
+
+    text = '''<html>
+    <h1>Image Viewer</h1>
+    <p>Image viewer is an application created as a final project for the Udacity course.</p>
+    <p>This application demonstrates the use of OOP concepts.</p>
+    </html>'''
+
+    def __init__(self, parent):
+        wx.Dialog.__init__(self, parent, -1, "About Image Viewer Application...", size=(400,300))
+
+        webpage = wx.html.HtmlWindow(self) # An instance of html window
+        webpage.SetPage(self.text)
+        button = wx.Button(self, wx.ID_OK, "Ok") # An instance of button on the html window
+
+        # Create a BoxSizer which grows in vertical direction
+        sizer = wx.BoxSizer(wx.VERTICAL)
+        sizer.Add(webpage, 1, wx.EXPAND|wx.ALL, 5)
+        sizer.Add(button, 0, wx.ALIGN_CENTER|wx.ALL, 5)
+        self.SetSizer(sizer)
+        self.Layout()
 
 # Create a new app
 class App(wx.App):
