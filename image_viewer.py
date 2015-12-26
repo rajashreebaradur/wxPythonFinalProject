@@ -1,4 +1,5 @@
 import wx
+import os
 
 # Frame subclassed from wx.Frame
 class Frame(wx.Frame):
@@ -25,6 +26,21 @@ class Frame(wx.Frame):
     def OnOpen(self, event):
         "Open an image file, set title if successful"
         print "OnOpen called"
+        
+        # Create a file-open dialog in the current working directory
+        dlg = wx.FileDialog(self,
+                      message="Open an image...",
+                      defaultDir=os.getcwd(),
+                      defaultFile="",
+                      style=wx.OPEN)
+
+        # Call the dialog as a model-dialog so we are required to choose Ok or Cancel
+        if dlg.ShowModal() == wx.ID_OK:
+            filename = dlg.GetPath() # If user has selected something, get the file path and set the window's title to the path
+            print filename
+
+            dlg.Destroy() # Clean up dialog when its no longer needed
+        
 
     def OnExit(self, event):
         "Close the application by Destroying the object"
