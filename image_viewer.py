@@ -16,6 +16,20 @@ class Frame(wx.Frame):
         self.SetMenuBar(menuBar)
         menuFile = wx.Menu()
         menuBar.Append(menuFile, "&File")
+        fileOpenMenuItem = menuFile.Append(-1, "&Open...\tCtrl+O", "Open an image")
+        self.Bind(wx.EVT_MENU, self.OnOpen, fileOpenMenuItem)
+
+        exitMenuItem = menuFile.Append(-1, "E&xit\tCtrl+Q", "Exit the application")
+        self.Bind(wx.EVT_MENU, self.OnExit, exitMenuItem)
+
+    def OnOpen(self, event):
+        "Open an image file, set title if successful"
+        print "OnOpen called"
+
+    def OnExit(self, event):
+        "Close the application by Destroying the object"
+        print "OnExit called"
+        self.Destroy()
         
 
 # Create a new app
